@@ -1,0 +1,18 @@
+# IDE
+.idea/
+
+# Claude Code tooling
+.agents/
+.claude/
+skills-lock.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

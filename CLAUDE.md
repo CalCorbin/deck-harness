@@ -11,9 +11,6 @@ Single-script Python tool that verifies every card in a Magic: The Gathering dec
 ```bash
 # Verify a deck, print results to stdout
 python verify_deck.py decks/morska.md
-
-# Also write a JSON report
-python verify_deck.py decks/morska.md --json report.json
 ```
 
 ## Deck File Format
@@ -27,6 +24,27 @@ Markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed;
 1 Koma, Cosmos Serpent
 ```
 
+## Codebase Map
+
+```
+deck-harness/
+├── verify_deck.py          # Verification script (parse → check → report)
+├── pyproject.toml          # Ruff lint config (E, F, W, I, UP; 100-char lines)
+├── requirements-dev.txt    # Dev dependencies (ruff)
+├── Makefile                # Top-level make entrypoint; defines PYTHON, VENV_DIR, RUFF vars
+├── .make/
+│   ├── backend.mk          # be.setup (venv + install), be.lint (ruff check .)
+│   └── base.mk             # help target
+├── .github/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
+│       └── pull-request.yml  # CI: setup-python → be.setup → be.lint
+├── docs/
+│   └── python-style.md     # Coding standards; agents must read before writing Python
+└── decks/
+    └── morska.md           # Morska, the Unpredictable commander deck
+```
+
 ## Architecture
 
 `verify_deck.py` has three layers:
@@ -36,6 +54,10 @@ Markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed;
 3. **Report** — `main()` drives the loop, prints per-card status, summarizes misses, optionally writes JSON.
 
 Scryfall rate-limit policy: 100ms delay (`REQUEST_DELAY`) between every request, plus backoff on 429.
+
+## Python Style and Linting
+
+Before writing any Python, read `docs/python-style.md`.
 
 ## Pull Requests
 

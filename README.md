@@ -21,8 +21,6 @@ git clone https://github.com/CalCorbin/deck-harness.git
 cd deck-harness
 ```
 
-That's it. No virtualenv, no `pip install`.
-
 ---
 
 ## Codebase Map
@@ -34,14 +32,6 @@ deck-harness/
     └── morska.md       # Morska, the Unpredictable commander deck
 ```
 
-**`verify_deck.py`** has three layers:
-
-| Layer | Function | What it does |
-|-------|----------|--------------|
-| Parse | `parse_deck(path)` | Reads deck markdown, returns `[(count, name), …]` |
-| Check | `check_card(name)` | Hits Scryfall `/cards/named?exact=<name>`, returns `(found, detail)` |
-| Report | `main()` | Drives the loop, prints per-card status, optionally writes JSON |
-
 Rate-limit handling: 100ms delay between every request; exponential backoff (up to 4 attempts) on HTTP 429.
 
 ---
@@ -51,9 +41,6 @@ Rate-limit handling: 100ms delay between every request; exponential backoff (up 
 ```bash
 # Print results to stdout
 python verify_deck.py decks/morska.md
-
-# Also write a JSON report
-python verify_deck.py decks/morska.md --json report.json
 ```
 
 Sample output:

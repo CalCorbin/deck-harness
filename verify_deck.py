@@ -9,7 +9,6 @@ Lines that don't start with a number (headers, blanks, comments) are skipped.
 
 Usage:
     python verify_deck.py decks/morska.md
-    python verify_deck.py decks/morska.md --json report.json
 """
 
 import argparse
@@ -78,7 +77,6 @@ def check_card(name):
 def main():
     ap = argparse.ArgumentParser(description="Verify MTG deck cards against Scryfall.")
     ap.add_argument("deck", help="Path to the markdown deck file")
-    ap.add_argument("--json", metavar="FILE", help="Write a JSON report to FILE")
     args = ap.parse_args()
 
     cards = parse_deck(args.deck)
@@ -88,11 +86,9 @@ def main():
 
     print(f"Checking {len(cards)} unique card lines against Scryfall...\n")
 
-    results = []
     missing = []
     for count, name in cards:
         found, detail = check_card(name)
-        results.append({"count": count, "name": name, "found": found, "detail": detail})
         if found:
             print(f"  OK   {count:>2} {name}")
         else:
@@ -105,11 +101,6 @@ def main():
         print(f"{len(missing)} not found:")
         for name in missing:
             print(f"  - {name}")
-
-    if args.json:
-        with open(args.json, "w", encoding="utf-8") as fh:
-            json.dump(results, fh, indent=2)
-        print(f"\nJSON report written to {args.json}")
 
     return 1 if missing else 0
 

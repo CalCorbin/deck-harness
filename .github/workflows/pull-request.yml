@@ -1,0 +1,39 @@
+# General Workflow
+name: "👀 Pull Request Checks"
+on:
+  pull_request:
+
+# --------------------------------------------------------------------------------
+# Jobs Run in the `pull-request` Workflow
+# --------------------------------------------------------------------------------
+# [Workflow Notes]:
+#     - Set 15-minute timeout for each job (can be adjusted as needed)
+# --------------------------------------------------------------------------------
+jobs:
+  # --------------------------------------------------------------------------------
+  # [Phase 1a] Run backend CI checks - (ruff lint)
+  # --------------------------------------------------------------------------------
+  run-basic-checks:
+    name: "🌭 Phase 1a – Backend CI Checks"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # [Step 1] Checkout source code
+      - name: "🛒/  Checkout Repository"
+        uses: actions/checkout@v5
+
+      # [Step 2] Setup Python
+      - name: "⚙️/  Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # [Step 3] Install dev dependencies
+      - name: "📦/  Install Dev Dependencies"
+        shell: bash
+        run: make be.setup
+
+      # [Step 4] Run Lint
+      - name: "🧹/  Run Lint"
+        shell: bash
+        run: make be.lint

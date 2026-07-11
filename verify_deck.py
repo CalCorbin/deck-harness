@@ -59,13 +59,11 @@ def check_card(name):
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 try:
-                    body = json.load(e)
-                    detail = body.get("details", "not found")
-                except (ValueError, json.JSONDecodeError):
+                    detail = json.load(e).get("details", "not found")
+                except ValueError:
                     detail = "not found"
                 return False, detail
             if e.code == 429:
-                # Rate limited: back off and retry.
                 time.sleep(2 ** attempt)
                 continue
             return False, f"HTTP {e.code}"

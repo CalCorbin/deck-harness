@@ -44,10 +44,25 @@ Namespaces are one honking great idea -- let's do more of those!
 
 **If it's hard to explain, it's a bad idea** — this applies to function signatures, data structures, and module organization equally.
 
+## Linting
+
+All Python must pass ruff before merging. Run it with:
+
+```bash
+make be.setup   # first time only — creates .venv and installs ruff
+make be.lint    # run this after every change
+```
+
+`make be.lint` must exit 0. Fix all findings before opening a PR.
+
+Ruff is configured in `pyproject.toml` (`E`, `F`, `W`, `I`, `UP` rules, 100-char line length, Python 3.11 target).
+
 ## For Agents
 
 When generating or modifying Python in this repo:
 
+- Read this file before writing any Python.
+- Run `make be.lint` after every change and fix all findings before reporting work done.
 - Prefer stdlib over third-party libraries unless the gain is substantial.
 - Do not introduce a helper function unless it reduces cognitive load for a reader — DRY alone is not justification.
 - Match the style and structure of surrounding code before proposing a new pattern.

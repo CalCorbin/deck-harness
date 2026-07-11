@@ -14,11 +14,12 @@ Agentic harness for crafting and storing Magic: The Gathering decks. Decks live 
 
 ## Setup
 
-Python 3.8+ required. No third-party dependencies — stdlib only.
+Python 3.11+ required.
 
 ```bash
 git clone https://github.com/CalCorbin/deck-harness.git
 cd deck-harness
+make be.setup   # creates .venv, installs dev dependencies
 ```
 
 ---
@@ -27,9 +28,21 @@ cd deck-harness
 
 ```
 deck-harness/
-├── verify_deck.py      # Verification script (parse → check → report)
+├── verify_deck.py          # Verification script (parse → check → report)
+├── pyproject.toml          # Ruff lint config
+├── requirements-dev.txt    # Dev dependencies (ruff)
+├── Makefile                # Top-level make entrypoint
+├── .make/
+│   ├── backend.mk          # be.setup, be.lint targets
+│   └── base.mk             # help target
+├── .github/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/
+│       └── pull-request.yml  # CI: ruff lint on every PR
+├── docs/
+│   └── python-style.md     # Coding standards and lint instructions
 └── decks/
-    └── morska.md       # Morska, the Unpredictable commander deck
+    └── morska.md           # Morska, the Unpredictable commander deck
 ```
 
 Rate-limit handling: 100ms delay between every request; exponential backoff (up to 4 attempts) on HTTP 429.

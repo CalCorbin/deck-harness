@@ -11,7 +11,7 @@ on:
 # --------------------------------------------------------------------------------
 jobs:
   # --------------------------------------------------------------------------------
-  # [Phase 1a] Run backend CI checks - (ruff lint)
+  # [Phase 1a] Run backend CI checks - (ruff lint, pytest)
   # --------------------------------------------------------------------------------
   run-basic-checks:
     name: "🌭 Phase 1a – Backend CI Checks"
@@ -37,3 +37,8 @@ jobs:
       - name: "🧹/  Run Lint"
         shell: bash
         run: make be.lint
+
+      # [Step 5] Run Tests
+      - name: "🧪/  Run Tests"
+        shell: bash
+        run: make be.test

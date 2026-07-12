@@ -29,3 +29,14 @@ be.lint: ## 🧹 Run ruff linter checks
 	@$(MAKE) styles.println.green TEXT="🧹 Linting code..."
 	$(RUFF) check .
 	@$(call PRINT_FOOTER,yellow)
+
+# -----------------------------------------------------------------------------
+# [be.test] - 🧪 Run test suite with coverage
+# -----------------------------------------------------------------------------
+.PHONY: be.test
+be.test: ## 🧪 Run pytest with 100% coverage gate
+	@$(call PRINT_HEADER,yellow)
+	@$(MAKE) styles.println.green TEXT="Running pytest"
+	@$(MAKE) styles.println.green TEXT="🧪 Testing code..."
+	$(PYTEST) --cov=verify_deck --cov-report=term-missing
+	@$(call PRINT_FOOTER,yellow)

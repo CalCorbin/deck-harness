@@ -38,5 +38,5 @@ be.test: ## 🧪 Run pytest with 100% coverage gate
 	@$(call PRINT_HEADER,yellow)
 	@$(MAKE) styles.println.green TEXT="Running pytest"
 	@$(MAKE) styles.println.green TEXT="🧪 Testing code..."
-	$(PYTEST) --cov=verify_deck --cov-report=term-missing
+	$(PYTEST) --cov=verify_deck --cov=verify_card --cov-report=term-missing
 	@$(call PRINT_FOOTER,yellow)

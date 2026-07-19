@@ -27,6 +27,17 @@ Markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed;
 1 Koma, Cosmos Serpent
 ```
 
+## Suggesting Cards
+
+Before suggesting or adding a card to a deck file in `decks/`, verify it exists on
+Scryfall with `make card.verify NAME='<exact card name>'` (or `python verify_card.py
+"<exact card name>"`). Do this for every card name before it's proposed to the user or
+written into a deck file — never rely on memory/training data for exact card names,
+wording, or existence. Card names are easy to misremember or hallucinate (typos, wrong
+capitalization, cards from other games, cards that don't exist), and a wrong name added
+to a deck file will silently fail `verify_deck.py` later instead of being caught at
+suggestion time.
+
 ## Codebase Map
 
 ```

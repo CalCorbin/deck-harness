@@ -1,42 +1,64 @@
-# Implementation Plan: Add Ruff Lint
+# Implementation Plan: Single-Card Scryfall Verification CLI
 
 ## Overview
 
-Wire ruff into the repo so `make be.lint` works end-to-end. The Makefile already references `$(VENV_DIR)/bin/ruff` and `backend.mk` already has the `be.lint` target — what's missing is the ruff config, a dev-deps file to pin ruff, and a venv-setup make target to install it.
+Add `verify_card.py`, a standalone script that looks up one card by exact name
+on Scryfall and prints either a rich emoji-tagged table (found) or a clear
+failure message (not found). Mirrors `verify_deck.py`'s check/format/report
+layering and stdlib-only runtime policy. Full detail: `SPEC.md`.
 
 ## Architecture Decisions
 
-- Config lives in `pyproject.toml` (standard Python tooling home; no extra config file needed)
-- Dev deps pinned in `requirements-dev.txt` (stdlib-only project has no `requirements.txt`; keeps prod deps separate)
-- Venv setup target added to `backend.mk` as `be.setup` (consistent with existing `be.lint` naming)
+- New flat script (`verify_card.py`), not a subcommand of `verify_deck.py` —
+  keeps each CLI single-purpose, matches existing repo pattern (decided in SPEC.md).
+- 429 backoff/retry logic is copied from `verify_deck.check_card`, not shared
+  via a new `lib/` module — premature abstraction for ~15 lines, per CLAUDE.md
+  "no gratuitous abstraction." Revisit if a third script needs it.
+- No third-party table library — stdlib f-string formatting is enough for a
+  fixed 7-row table.
 
 ## Task List
 
-### Phase 1: Config and Deps
+### Phase 1: Fetch layer
 
-- [ ] Task 1: Add `pyproject.toml` with ruff config
-- [ ] Task 2: Add `requirements-dev.txt` pinning ruff
+- [x] Task 1: `fetch_card(name)` — exact-match lookup, success/404/429/HTTP/network paths
 
-### Checkpoint: Config
+### Checkpoint: Fetch layer
+- [x] `make be.test` green, `fetch_card` fully covered
 
-- [ ] `pyproject.toml` parses cleanly (`python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))"`)
+### Phase 2: Format layer
 
-### Phase 2: Make Target
+- [x] Task 2: `render_card_table(data)` — pure formatting function
+- [x] Task 3: `render_not_found(name, detail)` — pure formatting function
 
-- [ ] Task 3: Add `be.setup` target to `backend.mk`
+### Checkpoint: Format layer
+- [x] `make be.test` green, both render functions fully covered
 
-### Phase 3: Verify
+### Phase 3: Report layer (wiring)
 
-- [ ] Task 4: Run `make be.setup && make be.lint` end-to-end, fix any lint issues in `verify_deck.py`
+- [x] Task 4: `main()` — argparse, fetch → render → print, exit codes
+
+### Checkpoint: Integration
+- [x] `make be.test` green at 100% coverage for `verify_card.py`
+- [x] `make be.lint` exits 0
+- [x] Manual run against real Scryfall: found card, not-found card
+
+### Phase 4: Docs
+
+- [x] Task 5: Update `CLAUDE.md` (Codebase Map + Architecture) for the new script, archive `SPEC.md` to `docs/specs/verify-card-cli.md`
 
 ### Checkpoint: Complete
-
-- [ ] `make be.lint` exits 0 on clean code
-- [ ] `make be.setup` is idempotent (safe to run twice)
+- [x] All SPEC.md acceptance criteria met
+- [x] Root `SPEC.md` archived to `docs/specs/verify-card-cli.md`
+- [x] Ready for review / PR
 
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| ruff finds real issues in verify_deck.py | Low | Fix inline; file is small |
-| Python < 3.11 lacks `tomllib` for checkpoint check | Low | Use `ruff --version` as sanity check instead |
+| Double-faced card fallback (`card_faces[0]`) logic untested against a real oddball card | Med | Craft a synthetic double-faced fixture dict in tests; don't rely on live API shape drift |
+| Duplicating retry logic from `verify_deck.py` drifts out of sync over time | Low | Accepted per SPEC.md boundary; revisit only if a third script needs it |
+
+## Open Questions
+
+None — SPEC.md resolved match mode, table fields, and entry-point shape.

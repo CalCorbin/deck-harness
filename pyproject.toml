@@ -10,7 +10,7 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.coverage.run]
-source = ["verify_deck"]
+source = ["verify_deck", "verify_card"]
 
 [tool.coverage.report]
 fail_under = 100

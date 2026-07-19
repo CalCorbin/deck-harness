@@ -5,8 +5,10 @@ Usage:
     python verify_card.py "Sol Ring"
 """
 
+import argparse
 import json
 import shutil
+import sys
 import textwrap
 import time
 import urllib.error
@@ -109,3 +111,21 @@ def render_card_table(data):
 def render_not_found(name, detail):
     """Render the not-found failure message. Pure formatting, no I/O."""
     return f'❌ "{name}" not found on Scryfall.\n   {detail}'
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Verify a single MTG card against Scryfall.")
+    ap.add_argument("name", help="Exact card name to look up")
+    args = ap.parse_args()
+
+    found, data = fetch_card(args.name)
+    if found:
+        print(render_card_table(data))
+        return 0
+
+    print(render_not_found(args.name, data.get("details", "not found")))
+    return 1
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(main())

@@ -218,3 +218,35 @@ def test_render_not_found_includes_name_and_detail():
     assert "❌" in message
     assert "Sol Rign" in message
     assert 'perhaps you meant "Sol Ring"?' in message
+
+
+# ---------------------------------------------------------------------------
+# main
+# ---------------------------------------------------------------------------
+
+
+def test_main_prints_table_and_returns_0_when_found(monkeypatch, capsys):
+    card = {"name": "Sol Ring", "prices": {}}
+    monkeypatch.setattr(verify_card, "fetch_card", lambda name: (True, card))
+    monkeypatch.setattr("sys.argv", ["verify_card.py", "Sol Ring"])
+
+    exit_code = verify_card.main()
+
+    out = capsys.readouterr().out
+    assert exit_code == 0
+    assert "🃏" in out and "Sol Ring" in out
+
+
+def test_main_prints_not_found_and_returns_1(monkeypatch, capsys):
+    monkeypatch.setattr(
+        verify_card, "fetch_card", lambda name: (False, {"details": "not found"})
+    )
+    monkeypatch.setattr("sys.argv", ["verify_card.py", "Not A Real Card"])
+
+    exit_code = verify_card.main()
+
+    out = capsys.readouterr().out
+    assert exit_code == 1
+    assert "❌" in out
+    assert "Not A Real Card" in out
+    assert "not found" in out

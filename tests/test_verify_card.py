@@ -8,7 +8,7 @@ import json
 import os
 import urllib.error
 
-import verify_card
+from deck_harness import verify_card
 
 
 class FakeResponse:

@@ -1,3 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deck-harness"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[project.scripts]
+verify-deck = "deck_harness.verify_deck:main"
+verify-card = "deck_harness.verify_card:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.ruff]
 target-version = "py311"
 line-length = 100
@@ -7,10 +23,9 @@ select = ["E", "F", "W", "I", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
 
 [tool.coverage.run]
-source = ["verify_deck", "verify_card"]
+source = ["deck_harness"]
 
 [tool.coverage.report]
 fail_under = 100

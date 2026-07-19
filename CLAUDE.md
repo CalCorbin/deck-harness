@@ -4,17 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Two Python CLIs that verify Magic: The Gathering card data against Scryfall: `verify_deck.py` checks every card in a deck file, `verify_card.py` looks up one card and prints its details as a rich table. Neither script has dependencies beyond stdlib. Dev tooling (lint, test) uses ruff and pytest — see [Testing](#testing) for why pytest was worth the exception.
+Two Python CLIs that verify Magic: The Gathering card data against Scryfall: `verify_deck.py` checks every card in a deck file, `verify_card.py` looks up one card and prints its details as a rich table. Both live in the `deck_harness` package (`src/deck_harness/`) and are exposed as console scripts (`verify-deck`, `verify-card`) via `pyproject.toml` `[project.scripts]`. Neither script has runtime dependencies beyond stdlib — the packaging itself (`setuptools`, editable install) is build-time only. Dev tooling (lint, test) uses ruff and pytest — see [Testing](#testing) for why pytest was worth the exception.
 
 ## Running
 
 ```bash
 # Verify a deck, print results to stdout
-python verify_deck.py decks/morska.md
+verify-deck decks/morska.md
 
 # Look up a single card by exact name, print a rich table (or a not-found message)
-python verify_card.py "Sol Ring"
+verify-card "Sol Ring"
 ```
+
+Requires `make be.setup` (installs `deck-harness` in editable mode) and an active venv, or call `.venv/bin/verify-deck` / `.venv/bin/verify-card` directly.
 
 ## Deck File Format
 
@@ -30,7 +32,7 @@ Markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed;
 ## Suggesting Cards
 
 Before suggesting or adding a card to a deck file in `decks/`, verify it exists on
-Scryfall with `make card.verify NAME='<exact card name>'` (or `python verify_card.py
+Scryfall with `make card.verify NAME='<exact card name>'` (or `verify-card
 "<exact card name>"`). Do this for every card name before it's proposed to the user or
 written into a deck file — never rely on memory/training data for exact card names,
 wording, or existence. Card names are easy to misremember or hallucinate (typos, wrong
@@ -42,13 +44,16 @@ suggestion time.
 
 ```
 deck-harness/
-├── verify_deck.py          # Deck-file batch verification (parse → check → report)
-├── verify_card.py          # Single-card lookup + rich emoji table (fetch → render → report)
-├── pyproject.toml          # Ruff lint config; pytest + coverage config (100% fail_under)
+├── src/deck_harness/
+│   ├── __init__.py
+│   ├── verify_deck.py      # Deck-file batch verification (parse → check → report)
+│   └── verify_card.py      # Single-card lookup + rich emoji table (fetch → render → report)
+├── pyproject.toml          # Package metadata, [project.scripts] entry points; ruff/pytest/coverage config (100% fail_under)
 ├── requirements-dev.txt    # Dev dependencies (ruff, pytest, pytest-cov)
-├── Makefile                # Top-level make entrypoint; defines PYTHON, VENV_DIR, PYTEST, RUFF vars
+├── Makefile                # Top-level make entrypoint; defines PYTHON, VENV_DIR, PYTEST, RUFF, VERIFY_CARD, VERIFY_DECK vars
 ├── .make/
-│   ├── backend.mk          # be.setup (venv + install), be.lint (ruff check .), be.test (pytest --cov)
+│   ├── backend.mk          # be.setup (venv + install -e .), be.lint (ruff check .), be.test (pytest --cov=deck_harness)
+│   ├── cards.mk            # card.verify target
 │   └── base.mk             # help target
 ├── .github/
 │   ├── PULL_REQUEST_TEMPLATE.md
@@ -84,6 +89,8 @@ Scryfall rate-limit policy: 100ms delay (`REQUEST_DELAY`) between every request,
 3. **Report** — `main()` calls fetch → render, prints the result, returns exit code `0` (found) or `1` (not found/error).
 
 `fetch_card`'s retry/backoff logic is intentionally duplicated from `verify_deck.check_card` rather than shared via a new module — extracting ~15 lines into a `lib/` package would be premature abstraction for two call sites (see `docs/specs/verify-card-cli.md` for the full rationale). Revisit only if a third script needs the same retry contract.
+
+Both scripts live in `src/deck_harness/` (standard src-layout) purely as a physical/packaging move — no shared code was introduced. It lets tests import `deck_harness.verify_deck` / `deck_harness.verify_card` without `sys.path` hacks and gives real CLI entry points (`verify-deck`, `verify-card`) via `pyproject.toml` `[project.scripts]`, installed with `pip install -e .` (folded into `make be.setup`).
 
 ## Python Style and Linting
 

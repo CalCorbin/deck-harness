@@ -19,7 +19,8 @@ Python 3.11+ required.
 ```bash
 git clone https://github.com/CalCorbin/deck-harness.git
 cd deck-harness
-make be.setup   # creates .venv, installs dev dependencies
+make be.setup            # creates .venv, installs dev dependencies, installs deck-harness in editable mode
+source .venv/bin/activate  # puts verify-deck / verify-card on PATH
 ```
 
 ---
@@ -28,19 +29,23 @@ make be.setup   # creates .venv, installs dev dependencies
 
 ```
 deck-harness/
-├── verify_deck.py          # Verification script (parse → check → report)
-├── pyproject.toml          # Ruff lint config
-├── requirements-dev.txt    # Dev dependencies (ruff)
+├── src/deck_harness/
+│   ├── verify_deck.py      # Verification script (parse → check → report)
+│   └── verify_card.py      # Single-card lookup CLI (fetch → render → report)
+├── pyproject.toml          # Package metadata, entry points, ruff/pytest/coverage config
+├── requirements-dev.txt    # Dev dependencies (ruff, pytest, pytest-cov)
 ├── Makefile                # Top-level make entrypoint
 ├── .make/
-│   ├── backend.mk          # be.setup, be.lint targets
-│   └── base.mk             # help target
+│   ├── backend.mk          # be.setup, be.lint, be.test targets
+│   ├── cards.mk            # card.verify target
+│   └── base.mk              # help target
 ├── .github/
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── workflows/
-│       └── pull-request.yml  # CI: ruff lint on every PR
+│       └── pull-request.yml  # CI: ruff lint + pytest on every PR
 ├── docs/
 │   └── python-style.md     # Coding standards and lint instructions
+├── tests/                  # pytest suite (100% coverage gate)
 └── decks/
     └── morska.md           # Morska, the Unpredictable commander deck
 ```
@@ -53,7 +58,7 @@ Rate-limit handling: 100ms delay between every request; exponential backoff (up 
 
 ```bash
 # Print results to stdout
-python verify_deck.py decks/morska.md
+verify-deck decks/morska.md
 ```
 
 Sample output:
@@ -95,5 +100,5 @@ Decks are markdown files in `decks/`. Lines matching `<count> [x] <card name>` a
 ## Adding a New Deck
 
 1. Create `decks/<deck-name>.md` using the format above.
-2. Run `python verify_deck.py decks/<deck-name>.md` to catch typos.
+2. Run `verify-deck decks/<deck-name>.md` to catch typos.
 3. Commit the file.

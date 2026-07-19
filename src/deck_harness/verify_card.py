@@ -2,7 +2,7 @@
 """Look up a single Magic: The Gathering card on Scryfall by exact name.
 
 Usage:
-    python verify_card.py "Sol Ring"
+    verify-card "Sol Ring"
 """
 
 import argparse

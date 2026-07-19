@@ -9,7 +9,7 @@ import urllib.error
 
 import pytest
 
-import verify_deck
+from deck_harness import verify_deck
 
 
 class FakeResponse:

@@ -1,6 +1,9 @@
 # IDE
 .idea/
 
+# Local per-machine make overrides
+Makefile.local
+
 # Claude Code tooling
 .agents/
 .claude/

@@ -15,5 +15,5 @@ card.verify: ## 🔍 Verify a single card exists on Scryfall (usage: make card.v
 		$(MAKE) styles.println.red TEXT="Usage: make card.verify NAME='Card Name'"; \
 		exit 1; \
 	fi
-	$(PYTHON) verify_card.py "$(NAME)"
+	$(VERIFY_CARD) "$(NAME)"
 	@$(call PRINT_FOOTER,yellow)

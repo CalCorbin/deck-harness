@@ -16,6 +16,7 @@ be.setup: ## 🔧 Create venv and install dev dependencies
 	$(PYTHON) -m venv $(VENV_DIR)
 	$(PIP) install --upgrade pip --quiet
 	$(PIP) install -r requirements-dev.txt --quiet
+	$(PIP) install -e . --quiet
 	@$(MAKE) styles.println.green TEXT="✓ Setup complete"
 	@$(call PRINT_FOOTER,yellow)
 
@@ -38,5 +39,5 @@ be.test: ## 🧪 Run pytest with 100% coverage gate
 	@$(call PRINT_HEADER,yellow)
 	@$(MAKE) styles.println.green TEXT="Running pytest"
 	@$(MAKE) styles.println.green TEXT="🧪 Testing code..."
-	$(PYTEST) --cov=verify_deck --cov=verify_card --cov-report=term-missing
+	$(PYTEST) --cov=deck_harness --cov-report=term-missing
 	@$(call PRINT_FOOTER,yellow)

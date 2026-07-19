@@ -14,15 +14,15 @@ same `USER_AGENT` header. Returns `(found: bool, data: dict)`:
 - URLError → `(False, {"details": f"network error: {reason}"})`
 
 **Acceptance criteria:**
-- [ ] `fetch_card("Sol Ring")`-style success returns `(True, dict)` with the
+- [x] `fetch_card("Sol Ring")`-style success returns `(True, dict)` with the
       real Scryfall fields intact
-- [ ] 404 returns `(False, {"details": ...})` using Scryfall's own detail text
-- [ ] 429 retries with backoff up to 4 attempts before giving up
-- [ ] Other HTTP errors and network errors return descriptive `(False, ...)`
+- [x] 404 returns `(False, {"details": ...})` using Scryfall's own detail text
+- [x] 429 retries with backoff up to 4 attempts before giving up
+- [x] Other HTTP errors and network errors return descriptive `(False, ...)`
 
 **Verification:**
-- [ ] `make be.test` — new tests for all 5 paths above pass
-- [ ] 100% line/branch coverage of `fetch_card`
+- [x] `make be.test` — new tests for all 5 paths above pass
+- [x] 100% line/branch coverage of `fetch_card`
 
 **Dependencies:** None
 
@@ -43,15 +43,15 @@ Renders the 7-row emoji table per SPEC.md (🃏 Name, 💠 Mana Cost, 📜 Type,
 Renders `n/a` when `prices.usd` is `null`.
 
 **Acceptance criteria:**
-- [ ] Single-faced card dict → all 7 rows render with correct values
-- [ ] Double-faced card dict (top-level `mana_cost`/`oracle_text` missing,
+- [x] Single-faced card dict → all 7 rows render with correct values
+- [x] Double-faced card dict (top-level `mana_cost`/`oracle_text` missing,
       present under `card_faces[0]`) → fallback values render correctly
-- [ ] `prices.usd is None` → Price row renders `n/a`
-- [ ] Output is a table (bordered/aligned), not a bare key: value dump
+- [x] `prices.usd is None` → Price row renders `n/a`
+- [x] Output is a table (bordered/aligned), not a bare key: value dump
 
 **Verification:**
-- [ ] `make be.test` — tests assert row content and table structure
-- [ ] 100% coverage of `render_card_table`, including the fallback branch
+- [x] `make be.test` — tests assert row content and table structure
+- [x] 100% coverage of `render_card_table`, including the fallback branch
 
 **Dependencies:** None (pure function, no fetch needed to test)
 
@@ -69,14 +69,14 @@ Renders `n/a` when `prices.usd` is `null`.
 SPEC.md, embedding the searched name and Scryfall's suggestion/detail text.
 
 **Acceptance criteria:**
-- [ ] Output clearly states the card was not found (visually distinct — not
+- [x] Output clearly states the card was not found (visually distinct — not
       a table row)
-- [ ] Output includes the `detail` string passed in (e.g. Scryfall's
+- [x] Output includes the `detail` string passed in (e.g. Scryfall's
       "did you mean" suggestion)
 
 **Verification:**
-- [ ] `make be.test` — asserts message contains both name and detail
-- [ ] 100% coverage of `render_not_found`
+- [x] `make be.test` — asserts message contains both name and detail
+- [x] 100% coverage of `render_not_found`
 
 **Dependencies:** None
 
@@ -97,16 +97,16 @@ returns `0` (found) or `1` (not found/error). Add
 `# pragma: no cover`, matching `verify_deck.py`.
 
 **Acceptance criteria:**
-- [ ] Running with a found card prints the table and exits 0
-- [ ] Running with a not-found card prints the ❌ message and exits 1
-- [ ] Running with an HTTP/network error prints an error and exits 1
+- [x] Running with a found card prints the table and exits 0
+- [x] Running with a not-found card prints the ❌ message and exits 1
+- [x] Running with an HTTP/network error prints an error and exits 1
 
 **Verification:**
-- [ ] `make be.test` — integration tests monkeypatch `urllib.request.urlopen`
+- [x] `make be.test` — integration tests monkeypatch `urllib.request.urlopen`
       and assert stdout (via `capsys`) + return code for each path
-- [ ] `make be.test` shows 100% coverage for `verify_card.py` overall
-- [ ] `make be.lint` exits 0
-- [ ] Manual: `python verify_card.py "Sol Ring"` and
+- [x] `make be.test` shows 100% coverage for `verify_card.py` overall
+- [x] `make be.lint` exits 0
+- [x] Manual: `python verify_card.py "Sol Ring"` and
       `python verify_card.py "Not A Real Card Xyz"` against live Scryfall
 
 **Dependencies:** Tasks 1, 2, 3
@@ -131,17 +131,17 @@ permanent record once the feature lands; `docs/` is where decisions/specs live
 long-term (matches the `docs/ideas/testing-framework.md` precedent).
 
 **Acceptance criteria:**
-- [ ] Codebase Map lists `verify_card.py` and its test file
-- [ ] Architecture section explains `fetch_card` / `render_card_table` /
+- [x] Codebase Map lists `verify_card.py` and its test file
+- [x] Architecture section explains `fetch_card` / `render_card_table` /
       `render_not_found` / `main` and notes the intentional retry-logic
       duplication vs. `verify_deck.py` (and why, per SPEC.md)
-- [ ] `SPEC.md` moved (`git mv`) to `docs/specs/verify-card-cli.md`, root
+- [x] `SPEC.md` moved (`git mv`) to `docs/specs/verify-card-cli.md`, root
       `SPEC.md` no longer exists
 
 **Verification:**
-- [ ] Manual read-through: a new agent could locate and understand
+- [x] Manual read-through: a new agent could locate and understand
       `verify_card.py` from CLAUDE.md alone
-- [ ] `ls SPEC.md` fails (not found); `ls docs/specs/verify-card-cli.md` succeeds
+- [x] `ls SPEC.md` fails (not found); `ls docs/specs/verify-card-cli.md` succeeds
 
 **Dependencies:** Task 4
 

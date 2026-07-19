@@ -21,36 +21,36 @@ layering and stdlib-only runtime policy. Full detail: `SPEC.md`.
 
 ### Phase 1: Fetch layer
 
-- [ ] Task 1: `fetch_card(name)` — exact-match lookup, success/404/429/HTTP/network paths
+- [x] Task 1: `fetch_card(name)` — exact-match lookup, success/404/429/HTTP/network paths
 
 ### Checkpoint: Fetch layer
-- [ ] `make be.test` green, `fetch_card` fully covered
+- [x] `make be.test` green, `fetch_card` fully covered
 
 ### Phase 2: Format layer
 
-- [ ] Task 2: `render_card_table(data)` — pure formatting function
-- [ ] Task 3: `render_not_found(name, detail)` — pure formatting function
+- [x] Task 2: `render_card_table(data)` — pure formatting function
+- [x] Task 3: `render_not_found(name, detail)` — pure formatting function
 
 ### Checkpoint: Format layer
-- [ ] `make be.test` green, both render functions fully covered
+- [x] `make be.test` green, both render functions fully covered
 
 ### Phase 3: Report layer (wiring)
 
-- [ ] Task 4: `main()` — argparse, fetch → render → print, exit codes
+- [x] Task 4: `main()` — argparse, fetch → render → print, exit codes
 
 ### Checkpoint: Integration
-- [ ] `make be.test` green at 100% coverage for `verify_card.py`
-- [ ] `make be.lint` exits 0
-- [ ] Manual run against real Scryfall: found card, not-found card
+- [x] `make be.test` green at 100% coverage for `verify_card.py`
+- [x] `make be.lint` exits 0
+- [x] Manual run against real Scryfall: found card, not-found card
 
 ### Phase 4: Docs
 
-- [ ] Task 5: Update `CLAUDE.md` (Codebase Map + Architecture) for the new script, archive `SPEC.md` to `docs/specs/verify-card-cli.md`
+- [x] Task 5: Update `CLAUDE.md` (Codebase Map + Architecture) for the new script, archive `SPEC.md` to `docs/specs/verify-card-cli.md`
 
 ### Checkpoint: Complete
-- [ ] All SPEC.md acceptance criteria met
-- [ ] Root `SPEC.md` archived to `docs/specs/verify-card-cli.md`
-- [ ] Ready for review / PR
+- [x] All SPEC.md acceptance criteria met
+- [x] Root `SPEC.md` archived to `docs/specs/verify-card-cli.md`
+- [x] Ready for review / PR
 
 ## Risks and Mitigations
 

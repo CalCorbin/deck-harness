@@ -11,6 +11,7 @@ import shutil
 import sys
 import textwrap
 import time
+import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -85,10 +86,20 @@ def _card_values(data):
     }
 
 
+def display_width(text):
+    """Terminal column width of text, counting East-Asian-Wide chars (incl. emoji) as 2."""
+    return sum(2 if unicodedata.east_asian_width(ch) in ("W", "F") else 1 for ch in text)
+
+
+def _ljust_display(text, width):
+    """Like str.ljust, but pads based on display_width instead of character count."""
+    return text + " " * max(width - display_width(text), 0)
+
+
 def render_card_table(data):
     """Render a bordered, emoji-labeled table of card details. Pure formatting, no I/O."""
     values = _card_values(data)
-    label_col = max(len(f"{emoji} {label}") for emoji, label, _ in TABLE_ROWS)
+    label_col = max(display_width(f"{emoji} {label}") for emoji, label, _ in TABLE_ROWS)
     terminal_width = shutil.get_terminal_size(fallback=(100, 24)).columns
     value_col = max(min(terminal_width, 100) - label_col - 7, 20)
 
@@ -97,7 +108,7 @@ def render_card_table(data):
 
     lines = [border("┌", "┬", "┐")]
     for emoji, label, key in TABLE_ROWS:
-        label_text = f"{emoji} {label}".ljust(label_col)
+        label_text = _ljust_display(f"{emoji} {label}", label_col)
         wrapped = textwrap.wrap(values[key], width=value_col) or [""]
         lines.append(f"│ {label_text} │ {wrapped[0].ljust(value_col)} │")
         for extra in wrapped[1:]:

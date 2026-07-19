@@ -148,6 +148,24 @@ def test_render_card_table_single_faced_card():
     assert "💵" in table and "$1.23" in table
 
 
+def test_render_card_table_borders_align_with_wide_emoji_labels():
+    data = {
+        "name": "Sol Ring",
+        "mana_cost": "{1}",
+        "type_line": "Artifact",
+        "rarity": "uncommon",
+        "set_name": "Commander",
+        "set": "cmd",
+        "oracle_text": "{T}: Add {C}{C}.",
+        "prices": {"usd": "1.23"},
+    }
+
+    table = verify_card.render_card_table(data)
+    widths = {verify_card.display_width(line) for line in table.splitlines()}
+
+    assert len(widths) == 1
+
+
 def test_render_card_table_double_faced_card_uses_face_fallback():
     data = {
         "name": "Delver of Secrets // Insectile Aberration",

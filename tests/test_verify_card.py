@@ -5,6 +5,7 @@ No real network calls: urllib.request.urlopen and time.sleep are patched via mon
 
 import io
 import json
+import os
 import urllib.error
 
 import verify_card
@@ -117,3 +118,103 @@ def test_fetch_card_network_error(monkeypatch):
     found, data = verify_card.fetch_card("Sol Ring")
 
     assert (found, data) == (False, {"details": "network error: no route to host"})
+
+
+# ---------------------------------------------------------------------------
+# render_card_table
+# ---------------------------------------------------------------------------
+
+
+def test_render_card_table_single_faced_card():
+    data = {
+        "name": "Sol Ring",
+        "mana_cost": "{1}",
+        "type_line": "Artifact",
+        "rarity": "uncommon",
+        "set_name": "Commander",
+        "set": "cmd",
+        "oracle_text": "{T}: Add {C}{C}.",
+        "prices": {"usd": "1.23"},
+    }
+
+    table = verify_card.render_card_table(data)
+
+    assert "🃏" in table and "Sol Ring" in table
+    assert "💠" in table and "{1}" in table
+    assert "📜" in table and "Artifact" in table
+    assert "⭐" in table and "uncommon" in table
+    assert "📦" in table and "Commander (CMD)" in table
+    assert "📝" in table and "{T}: Add {C}{C}." in table
+    assert "💵" in table and "$1.23" in table
+
+
+def test_render_card_table_double_faced_card_uses_face_fallback():
+    data = {
+        "name": "Delver of Secrets // Insectile Aberration",
+        "type_line": "Creature // Creature",
+        "rarity": "common",
+        "set_name": "Innistrad",
+        "set": "isd",
+        "prices": {"usd": None},
+        "card_faces": [
+            {"mana_cost": "{U}", "oracle_text": "At the beginning of your upkeep..."},
+            {"mana_cost": "", "oracle_text": "Flying"},
+        ],
+    }
+
+    table = verify_card.render_card_table(data)
+
+    assert "{U}" in table
+    assert "At the beginning of your upkeep..." in table
+
+
+def test_render_card_table_wraps_long_oracle_text(monkeypatch):
+    monkeypatch.setattr(
+        verify_card.shutil, "get_terminal_size", lambda fallback=None: os.terminal_size((80, 24))
+    )
+    data = {
+        "name": "Test Card",
+        "mana_cost": "{1}",
+        "type_line": "Artifact",
+        "rarity": "common",
+        "set_name": "Test Set",
+        "set": "tst",
+        "oracle_text": "word " * 40,
+        "prices": {"usd": None},
+    }
+
+    table = verify_card.render_card_table(data)
+    lines = table.splitlines()
+    text_row_index = next(i for i, line in enumerate(lines) if "📝" in line)
+
+    assert "word" in lines[text_row_index + 1]
+
+
+def test_render_card_table_shows_na_for_missing_price():
+    data = {
+        "name": "Test Card",
+        "mana_cost": "{1}",
+        "type_line": "Artifact",
+        "rarity": "common",
+        "set_name": "Test Set",
+        "set": "tst",
+        "oracle_text": "",
+        "prices": {"usd": None},
+    }
+
+    table = verify_card.render_card_table(data)
+
+    assert "n/a" in table
+
+
+# ---------------------------------------------------------------------------
+# render_not_found
+# ---------------------------------------------------------------------------
+
+
+def test_render_not_found_includes_name_and_detail():
+    message = verify_card.render_not_found("Sol Rign", 'perhaps you meant "Sol Ring"?')
+
+    assert "❌" in message
+    assert "Sol Rign" in message
+    assert 'perhaps you meant "Sol Ring"?' in message

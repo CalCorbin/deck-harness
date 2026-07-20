@@ -47,7 +47,8 @@ deck-harness/
 │   └── python-style.md     # Coding standards and lint instructions
 ├── tests/                  # pytest suite (100% coverage gate)
 └── decks/
-    └── morska.md           # Morska, the Unpredictable commander deck
+    └── morska/
+        └── card-list.md    # Morska, the Unpredictable commander deck
 ```
 
 Rate-limit handling: 100ms delay between every request; exponential backoff (up to 4 attempts) on HTTP 429.
@@ -58,7 +59,7 @@ Rate-limit handling: 100ms delay between every request; exponential backoff (up 
 
 ```bash
 # Print results to stdout
-verify-deck decks/morska.md
+verify-deck decks/morska/card-list.md
 ```
 
 Sample output:
@@ -81,7 +82,7 @@ Exit code is `0` when all cards verified, `1` if any failed.
 
 ## Deck File Format
 
-Decks are markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed; headers, blanks, and comments are ignored.
+Each deck lives in its own directory under `decks/`, named after the deck, containing a `card-list.md` file. Lines matching `<count> [x] <card name>` are parsed; headers, blanks, and comments are ignored.
 
 ```markdown
 # Morska, the Unpredictable
@@ -99,6 +100,6 @@ Decks are markdown files in `decks/`. Lines matching `<count> [x] <card name>` a
 
 ## Adding a New Deck
 
-1. Create `decks/<deck-name>.md` using the format above.
-2. Run `verify-deck decks/<deck-name>.md` to catch typos.
+1. Create `decks/<deck-name>/card-list.md` using the format above.
+2. Run `verify-deck decks/<deck-name>/card-list.md` to catch typos.
 3. Commit the file.

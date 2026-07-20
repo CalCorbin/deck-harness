@@ -8,7 +8,7 @@ Deck line format (one card per line):
 Lines that don't start with a number (headers, blanks, comments) are skipped.
 
 Usage:
-    verify-deck decks/morska.md
+    verify-deck decks/morska/card-list.md
 """
 
 import argparse

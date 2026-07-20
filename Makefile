@@ -16,7 +16,7 @@ RUFF ?= $(VENV_DIR)/bin/ruff
 VERIFY_CARD ?= $(VENV_DIR)/bin/verify-card
 VERIFY_DECK ?= $(VENV_DIR)/bin/verify-deck
 
-DECK_FILE ?= decks/morska.md
+DECK_FILE ?= decks/morska/card-list.md
 
 # -----------------------------------------------------------------------------
 # [git]

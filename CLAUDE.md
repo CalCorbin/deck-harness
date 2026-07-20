@@ -10,7 +10,7 @@ Two Python CLIs that verify Magic: The Gathering card data against Scryfall: `ve
 
 ```bash
 # Verify a deck, print results to stdout
-verify-deck decks/morska.md
+verify-deck decks/morska/card-list.md
 
 # Look up a single card by exact name, print a rich table (or a not-found message)
 verify-card "Sol Ring"
@@ -20,7 +20,7 @@ Requires `make be.setup` (installs `deck-harness` in editable mode) and an activ
 
 ## Deck File Format
 
-Markdown files in `decks/`. Lines matching `<count> [x] <card name>` are parsed; everything else (headers, blanks) is skipped.
+Each deck lives in its own directory under `decks/`, named after the deck, containing a `card-list.md` file. Lines matching `<count> [x] <card name>` are parsed; everything else (headers, blanks) is skipped.
 
 ```
 # Deck Name
@@ -69,7 +69,8 @@ deck-harness/
 │   ├── test_verify_deck.py # Unit tests for parse/check/report layers, monkeypatched urlopen
 │   └── test_verify_card.py # Unit tests for fetch/render/report layers, monkeypatched urlopen
 └── decks/
-    └── morska.md           # Morska, the Unpredictable commander deck
+    └── morska/
+        └── card-list.md    # Morska, the Unpredictable commander deck
 ```
 
 ## Architecture
